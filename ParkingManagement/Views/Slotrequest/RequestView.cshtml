@@ -1,0 +1,171 @@
+﻿@model ParkingManagement.Core.Model.RequestDetails
+
+@{
+    ViewBag.Title = "RequestView";
+}
+
+
+
+
+@using (Html.BeginForm("SaveRequestView", "Slotrequest", FormMethod.Post, new { @class = "form-horizontal", @id="formsaveid" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>New Request</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DurationId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.DurationId, new SelectList(Model.DurationList, "DurationId", "DurationDescription"), "Select one", new { @class = "form-control", id = "DurationId" })
+            @Html.ValidationMessageFor(model => model.DurationId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.FromDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ToDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PreferenceOneTowerId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.PreferenceOneTowerId, new SelectList(Model.TowerList, "TowerId", "TowerDescription"), "Select one", new { @class = "form-control", id = "PreferenceOneTowerId" })
+            @Html.ValidationMessageFor(model => model.PreferenceOneTowerId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PreferenceTwoTowerId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.PreferenceTwoTowerId, new SelectList(Model.TowerList, "TowerId", "TowerDescription"), "Select one", new { @class = "form-control", id = "PreferenceTwoTowerId" })
+            @Html.ValidationMessageFor(model => model.PreferenceTwoTowerId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PreferenceThreeTowerId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.PreferenceThreeTowerId, new SelectList(Model.TowerList, "TowerId", "TowerDescription"), "Select one", new { @class = "form-control", id = "PreferenceThreeTowerId" })
+            @Html.ValidationMessageFor(model => model.PreferenceThreeTowerId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <input id="urlPathid" type="hidden" value="@Url.Action("SaveRequestView", "Slotrequest")" />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" id="savebtn" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+@*<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>*@
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+<script>
+    var roleObj = [];
+    $(document).ready(function () {
+        $("#FromDate").attr("disabled", true).val("");
+        $("#ToDate").attr("disabled", true).val("");
+        $('#PreferenceTwoTowerId').attr("disabled", true);
+        $('#PreferenceThreeTowerId').attr("disabled", true);
+        $("#PreferenceOneTowerId option").each(function () {
+            roleObj.push(this)		// or $(this).val()
+            });
+    });
+    $("#DurationId").change(function (val) {
+        optionselected = $(this).val();
+        var myDate = new Date();
+        myDate.setDate(myDate.getDate() + 1);
+        // format a date
+        var dt = myDate.getDate() + '/' + ("0" + (myDate.getMonth() + 1)).slice(-2) + '/' + myDate.getFullYear();
+
+        if (optionselected == "1") {
+            $("#FromDate").val(dt);
+            $("#ToDate").val(dt);
+        } else if (optionselected == "2") {
+            myDate.setDate(myDate.getDate() + 6);
+            // format a date
+            var todt = myDate.getDate() + '/' + ("0" + (myDate.getMonth() + 1)).slice(-2) + '/' + myDate.getFullYear();
+            $("#FromDate").val(dt);
+            $("#ToDate").val(todt);
+        } else if (optionselected == "3") {
+            myDate.setDate(myDate.getDate() + 30);
+            // format a date
+            var todt = myDate.getDate() + '/' + ("0" + (myDate.getMonth() + 1)).slice(-2) + '/' + myDate.getFullYear();
+            $("#FromDate").val(dt);
+            $("#ToDate").val(todt);
+        }
+    });
+    $("#PreferenceOneTowerId").change(function (val) {
+        $('#PreferenceTwoTowerId').attr("disabled", false);
+        $("#PreferenceTwoTowerId option[value='" + $(this).val() +"']").remove();
+        $("#PreferenceThreeTowerId option[value='" + $(this).val() +"']").remove();
+    });
+    $("#PreferenceTwoTowerId").change(function (val) {
+        $('#PreferenceThreeTowerId').attr("disabled", false);
+        $("#PreferenceThreeTowerId option[value='" + $(this).val() + "']").remove();
+        $("#PreferenceOneTowerId option[value='" + $(this).val() + "']").remove();
+    });
+    $("#PreferenceThreeTowerId").change(function (val) {
+        $("#PreferenceOneTowerId option[value='" + $(this).val() + "']").remove();
+        $("#PreferenceTwoTowerId option[value='" + $(this).val() + "']").remove();
+    });
+    $("#savebtn").click(function (e) {
+        e.preventDefault();
+        var _this = $(this);
+        var _form = _this.closest("form");
+
+        var isvalid = _form.valid();
+        if (isvalid == true) {
+            var RequestDetails = {
+                DurationId: $("#DurationId option:selected").val(),
+                FromDate: $("#FromDate").val(),
+                ToDate: $("#ToDate").val(),
+                PreferenceOneTowerId: $("#PreferenceOneTowerId option:selected").val(),
+                PreferenceTwoTowerId: $("#PreferenceTwoTowerId option:selected").val(),
+                PreferenceThreeTowerId: $("#PreferenceThreeTowerId option:selected").val()
+            }; 
+            //var formobj = $("#formsaveid").serialize();
+            var urlpath = $("#urlPathid").val();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: urlpath,
+                data: JSON.stringify(RequestDetails),
+                dataType: "json",  
+                success: function (data) {
+                    if (data == true) {
+                        alert("Record Save Successfully!!!");//never returned
+                        window.location.href = "@Url.Action("HomePage", "Home")";
+                    } else {
+                        alert("Please fill the details");
+                    }
+                },
+                error: function (err) {
+                    alert("Record Not Saved");//always return this one, even it's succeed
+                }
+            });
+        } else {
+            // show toast message
+            alert("Please enter required field");
+        }
+        });
+    </script>
+}

@@ -1,0 +1,78 @@
+﻿@model ParkingManagement.Core.Model.HomePage
+
+@{
+    ViewBag.Title = "Surrenderview";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal">
+    <div>
+        <h3>Parking Allocation List</h3>
+    </div>
+    <br />
+    <br />
+    <div>
+        @if (Model.ParkingAllocatin.Count() > 0)
+        {
+
+            <table id="surrenderid" class="table table-bordered table-hover">
+                <thead>
+                    <tr style="background-color:lavender">
+                        <th>Id</th>
+                        <th>Duration</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Parking Slot</th>
+                        <th>Cancel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ParkingAllocatin)
+                    {
+                        <tr>
+                            <td>@item.ParkingAllocationId</td>
+                            <td>@item.RequestDurationType.DurationDescription</td>
+                            <td>@item.FromDate</td>
+                            <td>@item.ToDate</td>
+                            <td>@item.TowerParkingSlot.Tower.TowerDescription - @item.TowerParkingSlot.ParkingSlot.SlotDescription</td>
+                            <td><input type="button" value="Surrender" onclick="SurrenderClick(@item.ParkingAllocationId)" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h4>No Record found</h4>
+        }
+    </div>
+    <br />
+    @*<input type="button" class="btn-primary" value="Cancel" onclick="@("window.location.href='" + @Url.Action("HomePage", "Home") + "'");" />*@
+    <input type="button" value="Back" class="btn-danger" id="btnrunlottery" onclick="cancelclick(@HttpContext.Current.Session["UserId"].ToString());" />
+
+</div>
+
+
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        function cancelclick(req_id) {
+             window.location.href = "@Url.Action("HomePage", "Home")";
+        }
+        $(document).ready(function () {
+            $('#surrenderid').DataTable();
+        });
+        function SurrenderClick(req_id) {
+            if (confirm(" Are you sure?")) {
+            window.location.href = "@Url.Action("UpdateSurrender", "Slotrequest")?id=" + req_id;
+            }
+        }
+    </script>
+}
+
+

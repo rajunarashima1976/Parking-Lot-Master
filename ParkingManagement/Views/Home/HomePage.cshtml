@@ -1,0 +1,88 @@
+﻿@model ParkingManagement.Core.Model.HomePage
+
+@{
+    /**/
+
+    ViewBag.Title = "Home Page";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <div>
+            <h3>Dashboard</h3>
+        </div>
+        <hr />
+        <div><h4>Welcome @Model.UserName Your Role Type - @Model.RoleName</h4></div>
+        <br />
+        <br />
+        <div>
+            @if (Model.RequestList.Count() > 0)
+            {
+            <table id="requesttblid" class="table table-bordered table-hover">
+                <thead>
+                    <tr style="background-color:lavender">
+                        <th>Id</th>
+                        <th>Duration</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Preference 1</th>
+                        <th>Preference 2</th>
+                        <th>Preference 3</th>
+                        <th>Cancel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.RequestList)
+                    {
+                    <tr>
+                        <td>@item.RequestDetailsId</td>
+                        <td>@item.RequestDurationType.DurationDescription</td>
+                        <td>@item.FromDate</td>
+                        <td>@item.ToDate</td>
+                        <td>Tower - @item.PreferenceOneTowerId</td>
+                        <td>Tower - @item.PreferenceTwoTowerId</td>
+                        <td>Tower - @item.PreferenceThreeTowerId</td>
+                        <td><input type="button" value="Cancel Request" onclick="DeleteClick(@item.RequestDetailsId)" /></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+                <h4>No Record found</h4>
+            }
+        </div>
+        <br />
+        @if (Model.RoleName.ToString() == "Admin")
+        {
+            <input type="button" class="btn-success" value="Go To Lottery" onclick="@("window.location.href='" + @Url.Action("LotteryList", "Home") + "'");" />
+            @*<input type="submit" value="Go To Lottery" class="btn btn-default" />*@
+        }
+        else
+        {
+            <input type="button" value="Raise New Request" class="btn-success" onclick="@("window.location.href='" + @Url.Action("RequestView", "Slotrequest") + "'");" />
+            <input type="button" value="Surrender Parking Slot" class="btn-success" onclick="@("window.location.href='" + @Url.Action("Surrenderview", "Slotrequest") + "'");" />
+
+        }
+
+    </div>
+
+
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            $('#requesttblid').DataTable();
+        });
+        function DeleteClick(req_id) {
+            if (confirm(" Are you sure?")) {
+                window.location.href = "@Url.Action("DeleteView", "Slotrequest")?userid=" + req_id;
+            }
+        }
+    </script>
+}

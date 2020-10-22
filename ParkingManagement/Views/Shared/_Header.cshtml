@@ -1,0 +1,35 @@
+﻿<div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#337ab7; border-color:#337ab7;">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("Parking Management", "", "", new { area = "" }, new { @class = "navbar-brand" })
+        </div>
+        <div class="navbar-collapse collapse" style="padding-left:900px;">
+            <ul class="nav navbar-nav">
+                @if (HttpContext.Current.Session["UserId"] != null && HttpContext.Current.Session["UserId"].ToString() != "")
+                {
+                    <li><a onclick="Homeclick(@HttpContext.Current.Session["UserId"].ToString());">Home</a>
+                        @*@Html.ActionLink("Home", "HomePage", "Home", new { area = "" }, null)*@
+                        @*<input type="button" value="Home" class="btn-success" onclick="Homeclick(@HttpContext.Current.Session["UserId"].ToString());" />*@
+                    </li>
+                    <li> @Html.ActionLink("Logout", "Logout", "Register", new { area = "" }, null) </li>
+
+                }
+                else
+                {
+                    <li> @Html.ActionLink("Login", "Login", "Register", new { area = "" }, null) </li>
+                    <li> @Html.ActionLink("Register", "Index", "Register", new { area = "" }, null) </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+        function Homeclick(Userid) {
+            window.location.href = "@Url.Action("HomePage", "Home")";
+        }
+</script>
